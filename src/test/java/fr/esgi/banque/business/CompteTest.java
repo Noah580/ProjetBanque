@@ -35,11 +35,11 @@ class CompteTest {
 	@NullAndEmptySource
 	@ValueSource(strings = {" ", "   "})
 	void shouldRejectMissingNumero(String numero) {
-
+		// Arrange
 		BigDecimal solde = new BigDecimal("100");
 		BigDecimal decouvert = new BigDecimal("200");
 
-
+		// Act & Assert
 		assertThatThrownBy(() -> new Compte(numero, "Alice", solde, decouvert))
 				.isInstanceOf(IllegalArgumentException.class);
 	}
@@ -48,21 +48,21 @@ class CompteTest {
 	@NullAndEmptySource
 	@ValueSource(strings = {" ", "   "})
 	void shouldRejectMissingTitulaire(String titulaire) {
-
+		// Arrange
 		BigDecimal solde = new BigDecimal("100");
 		BigDecimal decouvert = new BigDecimal("200");
 
-
+		// Act & Assert
 		assertThatThrownBy(() -> new Compte("FR001", titulaire, solde, decouvert))
 				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
 	void shouldCreateAccountWithValidNumeroAndTitulaire() {
-
+		// Act
 		Compte compte = new Compte("FR001", "Alice", new BigDecimal("100"), new BigDecimal("200"));
 
-
+		// Assert
 		assertThat(compte.getNumero()).isEqualTo("FR001");
 		assertThat(compte.getTitulaire()).isEqualTo("Alice");
 	}
@@ -71,20 +71,20 @@ class CompteTest {
 
 	@Test
 	void shouldRejectNullSoldeInitial() {
-
+		// Arrange
 		BigDecimal decouvert = new BigDecimal("200");
 
-
+		// Act & Assert
 		assertThatThrownBy(() -> new Compte("FR001", "Alice", null, decouvert))
 				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 	@Test
 	void shouldRejectNullDecouvertAutorise() {
-
+		// Arrange
 		BigDecimal solde = new BigDecimal("100");
 
-
+		// Act & Assert
 		assertThatThrownBy(() -> new Compte("FR001", "Alice", solde, null))
 				.isInstanceOf(IllegalArgumentException.class);
 	}
@@ -92,10 +92,10 @@ class CompteTest {
 	@ParameterizedTest
 	@ValueSource(strings = {"-0.01", "-1", "-200"})
 	void shouldRejectNegativeDecouvertAutorise(String decouvert) {
-
+		// Arrange
 		BigDecimal solde = new BigDecimal("100");
 
-
+		// Act & Assert
 		assertThatThrownBy(() -> new Compte("FR001", "Alice", solde, new BigDecimal(decouvert)))
 				.isInstanceOf(IllegalArgumentException.class);
 	}
@@ -103,11 +103,34 @@ class CompteTest {
 	@ParameterizedTest
 	@CsvSource({"0", "0.00", "0.01", "200"})
 	void shouldAcceptPositiveOrZeroDecouvertAutorise(String decouvert) {
-
+		// Act
 		Compte compte = new Compte("FR001", "Alice", new BigDecimal("100"), new BigDecimal(decouvert));
 
-
+		// Assert
 		assertThat(compte.getDecouvertAutorise()).isEqualByComparingTo(decouvert);
+	}
+
+	// ---------- C3 : crediter n'accepte qu'un montant strictement positif ----------
+
+	@ParameterizedTest
+	@ValueSource(strings = {"0", "0.00", "-0.01", "-50"})
+	void shouldRejectZeroOrNegativeAmountWhenCrediting(String montant) {
+		// Arrange
+		Compte compte = new Compte("FR001", "Alice", new BigDecimal("100.00"), new BigDecimal("200"));
+
+		// Act & Assert
+		assertThatThrownBy(() -> compte.crediter(new BigDecimal(montant)))
+				.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Test
+	void shouldRejectNullAmountWhenCrediting() {
+		// Arrange
+		Compte compte = new Compte("FR001", "Alice", new BigDecimal("100.00"), new BigDecimal("200"));
+
+		// Act & Assert
+		assertThatThrownBy(() -> compte.crediter(null))
+				.isInstanceOf(IllegalArgumentException.class);
 	}
 
 }
