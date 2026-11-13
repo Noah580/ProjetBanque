@@ -20,10 +20,14 @@ public class VirementServiceImpl {
 	}
 
 	public Virement virer(String numeroSource, String numeroDestination, BigDecimal montant) {
+		validerMontant(montant);
+		return null;
+	}
+
+	private void validerMontant(BigDecimal montant) {
 		if (montant == null || montant.signum() <= 0) {
 			throw new IllegalArgumentException("Le montant du virement doit être strictement positif");
 		}
-		return null;
 	}
 
 }
