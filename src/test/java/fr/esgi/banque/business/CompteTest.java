@@ -168,4 +168,38 @@ class CompteTest {
 		assertThat(compte.getSolde()).isEqualByComparingTo("70.00");
 	}
 
+	// ---------- C5 : débit accepté jusqu'à -découvertAutorisé inclus ----------
+
+	@ParameterizedTest
+	@CsvSource({
+			"100.00, 200, 300.00, -200.00",
+			"100.00, 200, 299.99, -199.99",
+			"100.00, 0, 100.00, 0.00"
+	})
+	void shouldAcceptDebitUpToOverdraftLimit(String soldeInitial, String decouvert, String montant, String soldeAttendu) {
+		// Arrange
+		Compte compte = new Compte("FR001", "Alice", new BigDecimal(soldeInitial), new BigDecimal(decouvert));
+
+		// Act
+		compte.debiter(new BigDecimal(montant));
+
+		// Assert
+		assertThat(compte.getSolde()).isEqualByComparingTo(soldeAttendu);
+	}
+
+	@ParameterizedTest
+	@CsvSource({
+			"100.00, 200, 300.01",
+			"100.00, 0, 100.01"
+	})
+	void shouldRejectDebitBeyondOverdraftLimitAndKeepBalance(String soldeInitial, String decouvert, String montant) {
+		// Arrange
+		Compte compte = new Compte("FR001", "Alice", new BigDecimal(soldeInitial), new BigDecimal(decouvert));
+
+		// Act & Assert
+		assertThatThrownBy(() -> compte.debiter(new BigDecimal(montant)))
+				.isInstanceOf(SoldeInsuffisantException.class);
+		assertThat(compte.getSolde()).isEqualByComparingTo(soldeInitial);
+	}
+
 }
