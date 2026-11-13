@@ -45,4 +45,19 @@ class CalculFraisTest {
 				.isInstanceOf(IllegalArgumentException.class);
 	}
 
+	// ---------- F2 : frais de tenue de compte de 2,00 € par mois ----------
+
+	@Test
+	void shouldCharge2EurosForAccountMaintenance() {
+		// Arrange
+		int age = 40;
+		BigDecimal soldeMoyen = new BigDecimal("500");
+
+		// Act
+		BigDecimal frais = calculFrais.fraisMensuels(age, soldeMoyen, false);
+
+		// Assert
+		assertThat(frais).isEqualByComparingTo("2.00");
+	}
+
 }
