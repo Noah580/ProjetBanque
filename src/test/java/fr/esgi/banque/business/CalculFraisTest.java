@@ -103,4 +103,24 @@ class CalculFraisTest {
 		assertThat(frais).isEqualByComparingTo(fraisAttendus);
 	}
 
+	// ---------- F5 : carte premium +5,00 € toujours dus, même quand la tenue est offerte ----------
+
+	@ParameterizedTest
+	@CsvSource({
+			"40, 500, 7.00",
+			"25, 500, 5.00",
+			"40, 1000, 5.00",
+			"25, 1000, 5.00"
+	})
+	void shouldAlwaysCharge5EurosForPremiumCard(int age, String soldeMoyen, String fraisAttendus) {
+		// Arrange
+		boolean cartePremium = true;
+
+		// Act
+		BigDecimal frais = calculFrais.fraisMensuels(age, new BigDecimal(soldeMoyen), cartePremium);
+
+		// Assert
+		assertThat(frais).isEqualByComparingTo(fraisAttendus);
+	}
+
 }
