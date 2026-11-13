@@ -10,6 +10,7 @@
 |---|---|---|
 | C3 | `crediter` acceptait un montant nul (`signum() < 0` au lieu de `<= 0`). | `CompteTest.shouldRejectZeroOrNegativeAmountWhenCrediting` |
 | C5 | `debiter` refusait un débit atteignant exactement la limite du découvert (`<= 0` au lieu de `< 0`). | `CompteTest.shouldAcceptDebitUpToOverdraftLimit` |
+| C6 | `estVide()` utilisait `equals(BigDecimal.ZERO)`, qui compare aussi l'échelle : un solde de `0.00` n'était pas considéré comme vide. | `CompteTest.shouldBeEmptyWhenBalanceIsZero` |
 
 ## Couverture de code
 
