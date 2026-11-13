@@ -8,7 +8,7 @@
 
 | Règle | Description | Test qui le prouve |
 |---|---|---|
-|  |  |  |
+| C3 | `crediter` acceptait un montant nul (`signum() < 0` au lieu de `<= 0`). | `CompteTest.shouldRejectZeroOrNegativeAmountWhenCrediting` |
 
 ## Couverture de code
 
