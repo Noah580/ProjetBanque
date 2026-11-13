@@ -2,6 +2,7 @@ package fr.esgi.banque.business;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -64,6 +65,49 @@ class CompteTest {
 
 		assertThat(compte.getNumero()).isEqualTo("FR001");
 		assertThat(compte.getTitulaire()).isEqualTo("Alice");
+	}
+
+	// ---------- C2 : solde initial et découvert obligatoires, découvert >= 0 ----------
+
+	@Test
+	void shouldRejectNullSoldeInitial() {
+
+		BigDecimal decouvert = new BigDecimal("200");
+
+
+		assertThatThrownBy(() -> new Compte("FR001", "Alice", null, decouvert))
+				.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Test
+	void shouldRejectNullDecouvertAutorise() {
+
+		BigDecimal solde = new BigDecimal("100");
+
+
+		assertThatThrownBy(() -> new Compte("FR001", "Alice", solde, null))
+				.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"-0.01", "-1", "-200"})
+	void shouldRejectNegativeDecouvertAutorise(String decouvert) {
+
+		BigDecimal solde = new BigDecimal("100");
+
+
+		assertThatThrownBy(() -> new Compte("FR001", "Alice", solde, new BigDecimal(decouvert)))
+				.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@ParameterizedTest
+	@CsvSource({"0", "0.00", "0.01", "200"})
+	void shouldAcceptPositiveOrZeroDecouvertAutorise(String decouvert) {
+
+		Compte compte = new Compte("FR001", "Alice", new BigDecimal("100"), new BigDecimal(decouvert));
+
+
+		assertThat(compte.getDecouvertAutorise()).isEqualByComparingTo(decouvert);
 	}
 
 }
