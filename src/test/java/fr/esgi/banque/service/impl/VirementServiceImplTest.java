@@ -53,4 +53,16 @@ class VirementServiceImplTest {
 				.isInstanceOf(IllegalArgumentException.class);
 	}
 
+	// ---------- V2 : virement vers le même compte refusé ----------
+
+	@Test
+	void shouldRejectTransferToSameAccount() {
+		// Arrange
+		BigDecimal montant = new BigDecimal("100");
+
+		// Act & Assert
+		assertThatThrownBy(() -> service.virer("FR001", "FR001", montant))
+				.isInstanceOf(IllegalArgumentException.class);
+	}
+
 }
