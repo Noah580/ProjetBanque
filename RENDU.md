@@ -9,6 +9,7 @@
 | Règle | Description | Test qui le prouve |
 |---|---|---|
 | C3 | `crediter` acceptait un montant nul (`signum() < 0` au lieu de `<= 0`). | `CompteTest.shouldRejectZeroOrNegativeAmountWhenCrediting` |
+| C5 | `debiter` refusait un débit atteignant exactement la limite du découvert (`<= 0` au lieu de `< 0`). | `CompteTest.shouldAcceptDebitUpToOverdraftLimit` |
 
 ## Couverture de code
 
