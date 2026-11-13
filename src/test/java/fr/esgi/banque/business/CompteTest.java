@@ -133,4 +133,39 @@ class CompteTest {
 				.isInstanceOf(IllegalArgumentException.class);
 	}
 
+	// ---------- C4 : debiter n'accepte qu'un montant strictement positif ----------
+
+	@ParameterizedTest
+	@ValueSource(strings = {"0", "0.00", "-0.01", "-50"})
+	void shouldRejectZeroOrNegativeAmountWhenDebiting(String montant) {
+		// Arrange
+		Compte compte = new Compte("FR001", "Alice", new BigDecimal("100.00"), new BigDecimal("200"));
+
+		// Act & Assert
+		assertThatThrownBy(() -> compte.debiter(new BigDecimal(montant)))
+				.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Test
+	void shouldRejectNullAmountWhenDebiting() {
+		// Arrange
+		Compte compte = new Compte("FR001", "Alice", new BigDecimal("100.00"), new BigDecimal("200"));
+
+		// Act & Assert
+		assertThatThrownBy(() -> compte.debiter(null))
+				.isInstanceOf(IllegalArgumentException.class);
+	}
+
+	@Test
+	void shouldDecreaseBalanceWhenDebiting() {
+		// Arrange
+		Compte compte = new Compte("FR001", "Alice", new BigDecimal("100.00"), new BigDecimal("200"));
+
+		// Act
+		compte.debiter(new BigDecimal("30.00"));
+
+		// Assert
+		assertThat(compte.getSolde()).isEqualByComparingTo("70.00");
+	}
+
 }
