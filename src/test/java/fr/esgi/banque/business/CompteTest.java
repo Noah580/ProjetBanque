@@ -202,4 +202,32 @@ class CompteTest {
 		assertThat(compte.getSolde()).isEqualByComparingTo(soldeInitial);
 	}
 
+	// ---------- C6 : estVide() vrai quand le solde vaut zéro, quelle que soit l'écriture ----------
+
+	@ParameterizedTest
+	@ValueSource(strings = {"0", "0.0", "0.00", "0.000"})
+	void shouldBeEmptyWhenBalanceIsZero(String solde) {
+		// Arrange
+		Compte compte = new Compte("FR001", "Alice", new BigDecimal(solde), new BigDecimal("200"));
+
+		// Act
+		boolean vide = compte.estVide();
+
+		// Assert
+		assertThat(vide).isTrue();
+	}
+
+	@ParameterizedTest
+	@ValueSource(strings = {"0.01", "-0.01", "100"})
+	void shouldNotBeEmptyWhenBalanceIsNotZero(String solde) {
+		// Arrange
+		Compte compte = new Compte("FR001", "Alice", new BigDecimal(solde), new BigDecimal("200"));
+
+		// Act
+		boolean vide = compte.estVide();
+
+		// Assert
+		assertThat(vide).isFalse();
+	}
+
 }
